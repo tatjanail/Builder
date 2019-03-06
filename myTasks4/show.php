@@ -5,7 +5,7 @@ $db = new QueryBuilder;
 
 $id = $_GET['id'];
 
-$task = $db->getTask($id);
+$task = $db->getOne("tasks", $id);
 
 ?>
 
@@ -22,7 +22,7 @@ $task = $db->getTask($id);
             <p>
                 <?= $task['content'];?>
             </p>
-            <a href="/">Go Back</a>
+            <a href="./">Go Back</a>
         </div>
     </div>
 </div>

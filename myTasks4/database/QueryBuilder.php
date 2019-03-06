@@ -16,61 +16,72 @@ function __construct()
         $sql = "SELECT * FROM $table";
         $statement = $this->pdo->prepare($sql); //подготовить
        $statement->execute(); //true || false
-       $results = $statement->fetchall(PDO:FETCH_ASSOC);
+       $results = $statement->fetchAll(PDO::FETCH_ASSOC);
        
        return $results;
     }
-        //
-        // 1. Подключиться к БД
-        $pdo = new PDO("mysql:host=localhost; dbname=test", "root", "");
-        // CRUD
-        //2. Подготовить запрос
-        $sql = "SELECT * FROM tasks";
-        $statement = $pdo->prepare($sql); //подготовить
-        $result = $statement->execute(); //true || false
-        $tasks = $statement->fetchAll(PDO::FETCH_ASSOC);
+       
+        //Вывод одной задачи
+        function getOne($table, $id)
+        {
+            $sql = "SELECT * FROM $table WHERE id=:id";
+        
+        $statement = $this->pdo->prepare($sql); 
+        $statement->bindParam(":id", $id);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        
 
-        return $tasks;
+        return $result;
     }
 
     //Сохранение новой задачи
-    function addTask($data)
+    function store($table, $data)
     {
-        $pdo = new PDO("mysql:host=localhost; dbname=test", "root", "");
-        $sql = "INSERT INTO tasks (title, content) VALUES (:title, :content)";
-        $statement = $pdo->prepare($sql);
-        $statement->execute($data); //true || false
-    }
-
-    // Вывод одной задачи
-    function getTask($id)
-    {
-        $pdo = new PDO("mysql:host=localhost; dbname=test", "root", "");
-        $statement = $pdo->prepare("SELECT * FROM tasks WHERE id=:id");
-        $statement->bindParam(":id", $id);
-        $statement->execute();
-        $task = $statement->fetch(PDO::FETCH_ASSOC);
-
-        return $task;
-    }
-
-    //Изменение\обновление существующей задачи
-    function updateTask($data)
-    {
-        $pdo = new PDO("mysql:host=localhost;dbname=test", "root", "");
-        $sql = 'UPDATE tasks SET title=:title, content=:content WHERE id=:id';
-        $statement = $pdo->prepare($sql);
+       // 1.Ключи массива
+        $keys = array_keys($data);
+        
+        // 2.Сформировать строку title, content
+        $stringOfKeys = implode(',', $keys);
+        // 3.Сформировать метки
+        $placeholders = ":" . implode(', :', $keys);
+        $sql = "INSERT INTO $table ($stringOfKeys) VALUES ($placeholders)";
+        $statement = $this->pdo->prepare($sql);
         $statement->execute($data); // true || false
     }
 
-    //Удаление задачи
-    function deleteTask($id)
+    //Изменение\обновление существующей задачи
+    function update($table, $data)
     {
-        $pdo = new PDO("mysql:host=localhost; dbname=test", "root", "");
+      $fields = '';
+      
+      foreach($data as $key => $value) {
+          
+          $fields .= $key . "=:" . $key . ",";
+      }
+      
+      $fields = rtrim($fields, ',');
+      
+      
+      $sql = "UPDATE $table SET $fields WHERE id=:id";
+      
+      $statement = $this->pdo->prepare($sql);
+      $statement->execute($data); // true || false
+    }  
+       //Удаление задачи
+    function delete($table, $id)
+    {
+       
 
-        $sql = 'DELETE FROM tasks WHERE id=:id';
-        $statement = $pdo->prepare($sql);
+        $sql = "DELETE FROM $table WHERE id=:id";
+        $statement = $this->pdo->prepare($sql);
         $statement->bindParam(":id", $id);
-        $statement->execute();
-    }
+        $statement->execute(); 
+        
+    }  
+        
+        
+        
+     
+    
 }

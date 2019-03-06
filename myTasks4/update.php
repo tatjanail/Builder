@@ -9,7 +9,8 @@ $data = [
     "title" =>  $_POST['title'],
     "content"   =>  $_POST['content']
 ];
+$table="tasks";
 
-$db->updateTask($data);
+$tasks = $db->update($table, $data);
 
-header("Location: http://localhost/MyNotes0/Tasks3/"); exit;
+header("Location:./"); exit;

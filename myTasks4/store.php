@@ -4,6 +4,12 @@ require 'database/QueryBuilder.php';
 
 $db = new QueryBuilder;
 
-$db->addTask($_POST);
+$data = [
+    "title" => $_POST['title'],
+    "content"  => $_POST['content']
+];
 
-header("Location: http://localhost/MyNotes0/Tasks3/"); exit;
+//$db->addTask($data);
+$db->store("tasks", $data);
+
+header("Location:./"); exit;
